@@ -3,4 +3,8 @@ redis
 types-redis
 uvicorn
 psycopg2
+asyncpg
+alembic
+pyjwt
+passlib[bcrypt]
 fastapi-users[sqlalchemy]

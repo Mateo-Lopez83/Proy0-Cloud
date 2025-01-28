@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Text, Date
+from sqlalchemy import Column, ForeignKey, Integer, String, Text, Date, Boolean
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -7,8 +7,11 @@ class USUARIO(Base):
 
     ID = Column(Integer, primary_key=True, index=True, autoincrement=True)
     nombre_usuario = Column(String(255), nullable=False)
-    contrasenia = Column(String(255), nullable=False)
+    contrasenia = Column(String(255), nullable=False)  
     imagen_perfil = Column(Text, default="default_profile_image.png")
+    is_active = Column(Boolean, default=True) 
+    email = Column(String(255), unique=True, index=True, nullable=False)  
+    is_superuser = Column(Boolean, default=False)  
     tareas = relationship("TAREA", back_populates="usuario")
 
 class CATEGORIA(Base):

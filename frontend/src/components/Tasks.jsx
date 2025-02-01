@@ -66,6 +66,25 @@ const Tasks = () => {
     fetchTasks();
   }, [token, navigate]);
 
+  // Function to handle task deletion
+  const handleDeleteTask = async (idTarea) => {
+    try {
+      const response = await fetch(`http://localhost:8000/borrarTarea/${idTarea}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) throw new Error('Failed to delete task');
+
+      // Remove the deleted task from the state
+      setTasks((prevTasks) => prevTasks.filter((task) => task.ID !== idTarea));
+    } catch (err) {
+      console.error('Failed to delete task:', err);
+    }
+  };
+
   const indexOfLastTask = currentPage * tasksPerPage;
   const indexOfFirstTask = indexOfLastTask - tasksPerPage;
   const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
@@ -82,11 +101,20 @@ const Tasks = () => {
           <div style={styles.taskList}>
             {currentTasks.map((task) => (
               <div key={task.ID} style={styles.taskCard}>
-                <h3 style={styles.taskTitle}>
-                  {categories[task.ID_Categoria] || 'Loading...'} - {task.texto_tarea}
-                </h3>
-                <p><strong>Fecha de creación:</strong> {task.fecha_creacion}</p>
-                <p><strong>Fecha estimada:</strong> {task.fecha_tentativa_finalizacion}</p>
+                <div style={styles.taskContent}>
+                  <h3 style={styles.taskTitle}>
+                    {categories[task.ID_Categoria] || 'Loading...'} - {task.texto_tarea}
+                  </h3>
+                  <p style={styles.p}><strong>Estado:</strong> {task.estado}</p>
+                  <p style={styles.p}><strong>Fecha de creación:</strong> {task.fecha_creacion}</p>
+                  <p style={styles.p}><strong>Fecha estimada:</strong> {task.fecha_tentativa_finalizacion}</p>
+                </div>
+                <button
+                  style={styles.checkmarkButton}
+                  onClick={() => handleDeleteTask(task.ID)}
+                >
+                  ✅
+                </button>
               </div>
             ))}
           </div>
@@ -104,6 +132,13 @@ const Tasks = () => {
         onClick={() => navigate('/nuevaTarea', { state: { token } })}
       >
         +
+      </button>
+      {/* Crear Categoria Button */}
+      <button
+        style={styles.crearCategoriaButton}
+        onClick={() => navigate('/nuevaCategoria', { state: { token } })}
+      >
+        Crear Categoria
       </button>
     </div>
   );
@@ -143,7 +178,10 @@ const styles = {
     padding: '20px',
     maxWidth: '800px',
     margin: '0 auto',
-    position: 'relative', // For positioning the plus button
+    position: 'relative', // For positioning the buttons
+  },
+  p: {
+    color: 'black',
   },
   heading: {
     textAlign: 'center',
@@ -161,10 +199,23 @@ const styles = {
     borderRadius: '8px',
     backgroundColor: '#f9f9f9',
     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  taskContent: {
+    flex: 1, // Allow the content to take up available space
   },
   taskTitle: {
     margin: '0 0 10px 0',
     color: '#007bff',
+  },
+  checkmarkButton: {
+    backgroundColor: 'transparent',
+    border: 'none',
+    fontSize: '20px',
+    cursor: 'pointer',
+    marginLeft: '10px', // Add some spacing between the content and the button
   },
   pagination: {
     display: 'flex',
@@ -195,6 +246,19 @@ const styles = {
     color: '#fff',
     border: 'none',
     fontSize: '24px',
+    cursor: 'pointer',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+  },
+  crearCategoriaButton: {
+    position: 'fixed',
+    bottom: '20px',
+    right: '90px', // Positioned to the left of the plus button
+    padding: '10px 20px',
+    borderRadius: '25px',
+    backgroundColor: '#ffcc00', // Yellow color
+    color: '#000',
+    border: 'none',
+    fontSize: '16px',
     cursor: 'pointer',
     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
   },

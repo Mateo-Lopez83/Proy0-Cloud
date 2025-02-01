@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const NuevaTarea = () => {
@@ -11,8 +11,31 @@ const NuevaTarea = () => {
     texto_tarea: '',
     fecha_tentativa_finalizacion: '',
     estado: 'Sin Empezar', // Default value for estado
-    ID_Categoria: '',
+    ID_Categoria: '', // Will store the selected category ID
   });
+
+  const [categories, setCategories] = useState([]); // Store fetched categories
+
+  // Fetch categories on component mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/categorias/', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch categories');
+        const data = await response.json();
+        setCategories(data);
+      } catch (err) {
+        console.error('Failed to fetch categories:', err);
+      }
+    };
+
+    fetchCategories();
+  }, [token]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -88,16 +111,22 @@ const NuevaTarea = () => {
           </select>
         </div>
         <div style={styles.formGroup}>
-          <label htmlFor="ID_Categoria" style={styles.label}>Category ID:</label>
-          <input
-            type="number"
+          <label htmlFor="ID_Categoria" style={styles.label}>Category:</label>
+          <select
             id="ID_Categoria"
             name="ID_Categoria"
             value={formData.ID_Categoria}
             onChange={handleChange}
             style={styles.input}
             required
-          />
+          >
+            <option value="">Select a category</option>
+            {categories.map((category) => (
+              <option key={category.ID} value={category.ID}>
+                {category.nombre} - {category.description}
+              </option>
+            ))}
+          </select>
         </div>
         <button type="submit" style={styles.button}>Create Task</button>
       </form>

@@ -269,6 +269,34 @@ def create_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
     db.refresh(db_usuario)
     return db_usuario
 
+@app.delete("/borrarTarea/{idTarea}")
+async def borrar_tarea(
+    idTarea: int,
+    current_user: Annotated[models.USUARIO, Depends(get_current_active_user)],
+    db: Session = Depends(get_db)
+):
+    # Fetch the task by its ID
+    tarea = db.query(models.TAREA).filter(models.TAREA.ID == idTarea).first()
+    
+    # If the task doesn't exist, return a 404 error
+    if not tarea:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Tarea con el id {idTarea} no encontrada"
+        )
+    
+    # Verify that the current user owns the task
+    if tarea.ID_Usuario != current_user.ID:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Error de autorización "
+        )
+    
+    db.delete(tarea)
+    db.commit()
+    
+    return {"message": f"Tarea borrada"}
+
 @app.post("/nuevaTarea/", response_model=TareaResponse)
 async def create_tarea(
     tarea_data: TareaCreate,
@@ -281,7 +309,7 @@ async def create_tarea(
         fecha_creacion = datetime.now(timezone.utc),
         fecha_tentativa_finalizacion = tarea_data.fecha_tentativa_finalizacion,
         estado = tarea_data.estado,
-        ID_Usuario = current_user.ID,  # Automatically set from the logged-in user
+        ID_Usuario = current_user.ID,  
         ID_Categoria = tarea_data.ID_Categoria
     )
     

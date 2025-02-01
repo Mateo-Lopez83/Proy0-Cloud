@@ -10,7 +10,7 @@ from jwt.exceptions import InvalidTokenError
 import models
 import database
 from sqlalchemy.orm import Session
-from schemas import UserCreate
+from schemas import UserCreate, TareaCreate, TareaResponse, CategoriaCreate, CategoriaResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -35,11 +35,11 @@ def get_db():
         
 #Permitir solo al frontend mandar solicitudes
 origins=[
-    "http://localhost:5100"
+    "http://localhost:5173"
 ]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -205,6 +205,31 @@ async def get_user_tareas(
     tareas = db.query(models.TAREA).filter(models.TAREA.ID_Usuario == current_user.ID).all()
     return tareas
 
+@app.get("/categorias/{c_id}")
+async def get_tareas_por_categoria(
+    c_id: int,
+    db: Session = Depends(get_db)
+):
+   
+    categoria = db.query(models.CATEGORIA).filter(models.CATEGORIA.ID == c_id).first()
+    
+    # If the category doesn't exist, return a 404 error
+    if not categoria:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Category with ID {c_id} not found"
+        )
+    
+   
+    return categoria.nombre
+
+@app.get("/categorias/")
+async def get_user_tareas(
+    db: Session = Depends(get_db)
+):
+    tareas = db.query(models.CATEGORIA).all()
+    return tareas
+
 @app.get("/")
 async def root(db: Session = Depends(get_db)):
     try:
@@ -244,7 +269,45 @@ def create_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
     db.refresh(db_usuario)
     return db_usuario
 
+@app.post("/nuevaTarea/", response_model=TareaResponse)
+async def create_tarea(
+    tarea_data: TareaCreate,
+    current_user: Annotated[models.USUARIO, Depends(get_current_active_user)],
+    db: Session = Depends(get_db)
+):
+    # Create a new TAREA object with the current user's ID
+    nueva_tarea = models.TAREA(
+        texto_tarea = tarea_data.texto_tarea,
+        fecha_creacion = datetime.now(timezone.utc),
+        fecha_tentativa_finalizacion = tarea_data.fecha_tentativa_finalizacion,
+        estado = tarea_data.estado,
+        ID_Usuario = current_user.ID,  # Automatically set from the logged-in user
+        ID_Categoria = tarea_data.ID_Categoria
+    )
+    
+    # Add to database
+    db.add(nueva_tarea)
+    db.commit()
+    db.refresh(nueva_tarea)
+    
+    return nueva_tarea
 
+@app.post("/nuevaCategoria/", response_model=CategoriaResponse)
+async def create_categoria(
+    cat_data: CategoriaCreate,
+    #current_user: Annotated[models.USUARIO, Depends(get_current_active_user)],
+    db: Session = Depends(get_db)
+):
+    
+    nueva_cat = models.CATEGORIA(
+        nombre = cat_data.nombre,
+        description = cat_data.description
+    )
+    db.add(nueva_cat)
+    db.commit()
+    db.refresh(nueva_cat)
+    
+    return nueva_cat
 
 if __name__ == "__main__":
     uvicorn.run(app, host='0.0.0.0', port=8000)

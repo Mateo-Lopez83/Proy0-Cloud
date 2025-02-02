@@ -4,4 +4,4 @@
 2. docker-compose up --build
 
 ##Opcional
-Importar el json [text](<CLOUD proy 0.postman_collection.json>) para hacer pruebas en postman
+Importar el json [CLOUD proy 0.postman_collection.json](<CLOUD proy 0.postman_collection.json>) para hacer pruebas en postman

@@ -89,9 +89,9 @@ const Tasks = () => {
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.heading}>Your Tasks</h1>
+      <h1 style={styles.heading}>Tus Tareas</h1>
       {tasks.length === 0 ? (
-        <p>No tasks found.</p>
+        <p style={styles.p}>No hay tareas actualmente.</p>
       ) : (
         <>
           <div style={styles.taskList}>

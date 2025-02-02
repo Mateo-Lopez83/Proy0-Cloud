@@ -69,10 +69,10 @@ const NuevaTarea = () => {
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.heading}>Create New Task</h1>
+      <h1 style={styles.heading}>Crear una nueva tarea</h1>
       <form onSubmit={handleSubmit} style={styles.form}>
         <div style={styles.formGroup}>
-          <label htmlFor="texto_tarea" style={styles.label}>Task Description:</label>
+          <label htmlFor="texto_tarea" style={styles.label}>Descripcion:</label>
           <input
             type="text"
             id="texto_tarea"
@@ -84,7 +84,7 @@ const NuevaTarea = () => {
           />
         </div>
         <div style={styles.formGroup}>
-          <label htmlFor="fecha_tentativa_finalizacion" style={styles.label}>Due Date:</label>
+          <label htmlFor="fecha_tentativa_finalizacion" style={styles.label}>fecha tentativa de finalizacion:</label>
           <input
             type="date"
             id="fecha_tentativa_finalizacion"
@@ -96,7 +96,7 @@ const NuevaTarea = () => {
           />
         </div>
         <div style={styles.formGroup}>
-          <label htmlFor="estado" style={styles.label}>Task Status:</label>
+          <label htmlFor="estado" style={styles.label}>Estado:</label>
           <select
             id="estado"
             name="estado"
@@ -111,7 +111,7 @@ const NuevaTarea = () => {
           </select>
         </div>
         <div style={styles.formGroup}>
-          <label htmlFor="ID_Categoria" style={styles.label}>Category:</label>
+          <label htmlFor="ID_Categoria" style={styles.label}>Categoria:</label>
           <select
             id="ID_Categoria"
             name="ID_Categoria"
@@ -120,7 +120,7 @@ const NuevaTarea = () => {
             style={styles.input}
             required
           >
-            <option value="">Select a category</option>
+            <option value="">Seleccionar...</option>
             {categories.map((category) => (
               <option key={category.ID} value={category.ID}>
                 {category.nombre} - {category.description}
@@ -128,7 +128,7 @@ const NuevaTarea = () => {
             ))}
           </select>
         </div>
-        <button type="submit" style={styles.button}>Create Task</button>
+        <button type="submit" style={styles.button}>Crear Tarea</button>
       </form>
     </div>
   );

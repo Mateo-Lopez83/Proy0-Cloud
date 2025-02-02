@@ -1,0 +1,346 @@
+{
+	"info": {
+		"_postman_id": "6a982021-dc8b-4230-8fb1-54feeb9d62be",
+		"name": "CLOUD proy 0",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32526199"
+	},
+	"item": [
+		{
+			"name": "GET USUARIOS",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crear Usuario JWT",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nombre_usuario\": \"pruebita\",\r\n  \"email\": \"testuser@example.com\",\r\n  \"contrasenia\": \"secreto\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener token de usuario",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "pruebita",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "secreto",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8000/token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get tareas de un usuario",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwcnVlYmEiLCJleHAiOjE3Mzg0NTczODN9.C2qv349Z9l7lAFX3jkuT4qpJ79Ph-ZY-CW4SSer5gKo",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/tareas/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"tareas",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get categorias",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/categorias/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"categorias",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get categoria id",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/categorias/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"categorias",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crear Categoria",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nombre\": \"Parchado\",\r\n  \"description\": \"Para todo lo que No está relacionado a la U :)\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/nuevaCategoria",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"nuevaCategoria"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crear Task",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwcnVlYmEiLCJleHAiOjE3MzgyNDY0MDR9.c_LSE1gvP_7PF3iiD8di67g_RgDjLWfvByPkk8W0MDU",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"texto_tarea\": \"Terminar la entrega de Cloud (llora)\",\r\n  \"fecha_tentativa_finalizacion\": \"2024-02-03\",\r\n  \"estado\": \"pendiente\",\r\n  \"ID_Categoria\":1\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/nuevaTarea",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"nuevaTarea"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Editar Task",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwcnVlYmEiLCJleHAiOjE3Mzg0NTczODN9.C2qv349Z9l7lAFX3jkuT4qpJ79Ph-ZY-CW4SSer5gKo",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"texto_tarea\": \"Terminar la entrega de Cloud (llora)\",\r\n  \"fecha_tentativa_finalizacion\": \"2024-02-03\",\r\n  \"estado\": \"pendiente\",\r\n  \"ID_Categoria\":1\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/modTarea/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"modTarea",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Borrar Tarea",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwcnVlYmEiLCJleHAiOjE3Mzg0NTEwOTd9.nnBiNKoxQFMiPVvr08jSFw0wzIgJh3Alf2-S0SfBonA",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/borrarTarea/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"borrarTarea",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Borrar Categoria",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwcnVlYml0YSIsImV4cCI6MTczODQ3MjIyNX0.aUjICG1X5j5IQe6rFp22q4wcn7sbA9AEBlah-LTOQ5c",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/borrarCategoria/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"borrarCategoria",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

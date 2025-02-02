@@ -69,7 +69,7 @@ const NuevaCategoria = () => {
           />
         </div>
         
-        <button type="submit" style={styles.button}>Create Task</button>
+        <button type="submit" style={styles.button}>Crear Categoria</button>
       </form>
     </div>
   );

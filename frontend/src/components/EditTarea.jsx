@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 
-const NuevaTarea = () => {
+const EditTarea = () => {
+  const { idTask } = useParams(); // Get the task ID from the URL
   const location = useLocation();
   const navigate = useNavigate();
   const token = location.state?.token || localStorage.getItem('accessToken');
@@ -10,13 +11,34 @@ const NuevaTarea = () => {
   const [formData, setFormData] = useState({
     texto_tarea: '',
     fecha_tentativa_finalizacion: '',
-    estado: 'Sin Empezar',
-    ID_Categoria: '', 
+    estado: '',
+    ID_Categoria: '',
   });
 
   const [categories, setCategories] = useState([]); // Store fetched categories
 
-  // Fetch categories on component mount
+  // Fetch task details
+  useEffect(() => {
+    const fetchTask = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/tareas/${idTask}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch task');
+        const data = await response.json();
+        setFormData(data); // Populate the form with the fetched task data
+      } catch (err) {
+        console.error('Failed to fetch task:', err);
+      }
+    };
+
+    fetchTask();
+  }, [idTask, token]);
+
+  // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -46,8 +68,8 @@ const NuevaTarea = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:8000/nuevaTarea', {
-        method: 'POST',
+      const response = await fetch(`http://localhost:8000/modTarea/${idTask}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
@@ -60,16 +82,16 @@ const NuevaTarea = () => {
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to create task');
-      navigate('/tasks', { state: { token } }); // Redirect back to tasks page
+      if (!response.ok) throw new Error('Failed to update task');
+      navigate('/tasks', { state: { token } }); // Redirect back to the tasks page
     } catch (err) {
-      console.error(err);
+      console.error('Failed to update task:', err);
     }
   };
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.heading}>Create New Task</h1>
+      <h1 style={styles.heading}>Edit Task</h1>
       <form onSubmit={handleSubmit} style={styles.form}>
         <div style={styles.formGroup}>
           <label htmlFor="texto_tarea" style={styles.label}>Task Description:</label>
@@ -83,6 +105,7 @@ const NuevaTarea = () => {
             required
           />
         </div>
+        
         <div style={styles.formGroup}>
           <label htmlFor="fecha_tentativa_finalizacion" style={styles.label}>Due Date:</label>
           <input
@@ -96,7 +119,7 @@ const NuevaTarea = () => {
           />
         </div>
         <div style={styles.formGroup}>
-          <label htmlFor="estado" style={styles.label}>Task Status:</label>
+          <label htmlFor="estado" style={styles.label}>Status:</label>
           <select
             id="estado"
             name="estado"
@@ -128,7 +151,7 @@ const NuevaTarea = () => {
             ))}
           </select>
         </div>
-        <button type="submit" style={styles.button}>Create Task</button>
+        <button type="submit" style={styles.button}>Update Task</button>
       </form>
     </div>
   );
@@ -176,4 +199,4 @@ const styles = {
   },
 };
 
-export default NuevaTarea;
+export default EditTarea;

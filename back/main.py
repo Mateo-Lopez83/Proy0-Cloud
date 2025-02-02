@@ -169,15 +169,10 @@ async def register_user(
     user: UserCreate,
     db: Session = Depends(get_db)
 ):
-    # Check if username already exists
     db_user = db.query(models.USUARIO).filter(models.USUARIO.nombre_usuario == user.nombre_usuario).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Oe loco este usuario ya existe")
-    
-    # Hash password
     hashed_password = get_hash_contrasenia(user.contrasenia)
-    
-    # Create new user
     new_user = models.USUARIO(
         nombre_usuario=user.nombre_usuario,
         email=user.email,
@@ -269,23 +264,50 @@ def create_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
     db.refresh(db_usuario)
     return db_usuario
 
+
+@app.put("/modTarea/{idTarea}", response_model=TareaResponse)
+async def modificar_tarea(
+    idTarea: int,
+    tarea_data: TareaCreate,  
+    current_user: Annotated[models.USUARIO, Depends(get_current_active_user)],
+    db: Session = Depends(get_db)
+):
+    tarea = db.query(models.TAREA).filter(models.TAREA.ID == idTarea).first()
+    if not tarea:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Task with ID {idTarea} not found"
+        )
+    if tarea.ID_Usuario != current_user.ID:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not authorized to modify this task"
+        )
+    
+    tarea.texto_tarea = tarea_data.texto_tarea
+    tarea.fecha_tentativa_finalizacion = tarea_data.fecha_tentativa_finalizacion
+    tarea.estado = tarea_data.estado
+    tarea.ID_Categoria = tarea_data.ID_Categoria
+    
+    db.commit()
+    db.refresh(tarea)
+    
+    return tarea
 @app.delete("/borrarTarea/{idTarea}")
 async def borrar_tarea(
     idTarea: int,
     current_user: Annotated[models.USUARIO, Depends(get_current_active_user)],
     db: Session = Depends(get_db)
 ):
-    # Fetch the task by its ID
+   
     tarea = db.query(models.TAREA).filter(models.TAREA.ID == idTarea).first()
     
-    # If the task doesn't exist, return a 404 error
     if not tarea:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Tarea con el id {idTarea} no encontrada"
         )
     
-    # Verify that the current user owns the task
     if tarea.ID_Usuario != current_user.ID:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -297,13 +319,33 @@ async def borrar_tarea(
     
     return {"message": f"Tarea borrada"}
 
+@app.delete("/borrarCategoria/{idCat}")
+async def borrar_categoria(
+    idCat: int,
+    current_user: Annotated[models.USUARIO, Depends(get_current_active_user)],
+    db: Session = Depends(get_db)
+):
+    cat = db.query(models.CATEGORIA).filter(models.CATEGORIA.ID == idCat).first()
+    if not cat:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Categoria con el id {idCat} no encontrada"
+        )
+    #cascadaaaa
+    tareas = db.query(models.TAREA).filter(models.TAREA.ID_Categoria == idCat).all()
+    for tarea in tareas:
+        db.delete(tarea)
+    db.delete(cat)
+    db.commit()
+    
+    return {"message": f"Categoria borrada"}
+
 @app.post("/nuevaTarea/", response_model=TareaResponse)
 async def create_tarea(
     tarea_data: TareaCreate,
     current_user: Annotated[models.USUARIO, Depends(get_current_active_user)],
     db: Session = Depends(get_db)
 ):
-    # Create a new TAREA object with the current user's ID
     nueva_tarea = models.TAREA(
         texto_tarea = tarea_data.texto_tarea,
         fecha_creacion = datetime.now(timezone.utc),
@@ -313,7 +355,6 @@ async def create_tarea(
         ID_Categoria = tarea_data.ID_Categoria
     )
     
-    # Add to database
     db.add(nueva_tarea)
     db.commit()
     db.refresh(nueva_tarea)

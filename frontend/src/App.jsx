@@ -5,6 +5,7 @@ import LoginForm from './Login.jsx';
 import Tasks from './components/Tasks.jsx';
 import NuevaTarea from './components/NuevaTarea.jsx';
 import NuevaCategoria from './components/NuevaCategoria.jsx';
+import EditTarea from './components/EditTarea.jsx';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/" element={<LoginForm />} />
         <Route path="/nuevaTarea" element={<NuevaTarea />} />
         <Route path="/nuevaCategoria" element={<NuevaCategoria />} />
+        <Route path="/editTarea/:idTask" element={<EditTarea />} />
       </Routes>
     </Router>
   );

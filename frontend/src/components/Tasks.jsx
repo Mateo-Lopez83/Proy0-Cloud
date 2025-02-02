@@ -2,7 +2,6 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-
 const Tasks = () => {
   const [tasks, setTasks] = useState([]);
   const [categories, setCategories] = useState({});
@@ -65,8 +64,6 @@ const Tasks = () => {
 
     fetchTasks();
   }, [token, navigate]);
-
-  // Function to handle task deletion
   const handleDeleteTask = async (idTarea) => {
     try {
       const response = await fetch(`http://localhost:8000/borrarTarea/${idTarea}`, {
@@ -84,7 +81,6 @@ const Tasks = () => {
       console.error('Failed to delete task:', err);
     }
   };
-
   const indexOfLastTask = currentPage * tasksPerPage;
   const indexOfFirstTask = indexOfLastTask - tasksPerPage;
   const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
@@ -102,7 +98,10 @@ const Tasks = () => {
             {currentTasks.map((task) => (
               <div key={task.ID} style={styles.taskCard}>
                 <div style={styles.taskContent}>
-                  <h3 style={styles.taskTitle}>
+                  <h3
+                    style={styles.taskTitle}
+                    onClick={() => navigate(`/editTarea/${task.ID}`, { state: { token } })}
+                  >
                     {categories[task.ID_Categoria] || 'Loading...'} - {task.texto_tarea}
                   </h3>
                   <p style={styles.p}><strong>Estado:</strong> {task.estado}</p>

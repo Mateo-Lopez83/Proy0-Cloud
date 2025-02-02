@@ -1,10 +1,10 @@
 fastapi[standard]
-redis
-types-redis
-uvicorn
-psycopg2
-asyncpg
-alembic
-pyjwt
+redis==5.2.1
+types-redis==4.6.0.20241004
+uvicorn==0.34.0
+psycopg2==2.9.10
+asyncpg==0.30.0
+alembic==1.14.1
+PyJWT==2.10.1
 passlib[bcrypt]
 fastapi-users[sqlalchemy]

@@ -1,0 +1,34 @@
+# Use an official Python runtime as a parent image
+FROM python:3.9-slim
+
+# Install system dependencies (including curl to download wait-for-it.sh)
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libpq-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Download wait-for-it.sh and make it executable
+RUN curl -o /usr/local/bin/wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh \
+    && chmod +x /usr/local/bin/wait-for-it.sh
+
+# Copy the requirements file into the container
+COPY back/requirements.txt .
+
+# Upgrade pip to the latest version
+RUN pip install --upgrade pip
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the current directory contents into the container
+COPY back /app
+
+# Expose the port the app runs on
+EXPOSE 8000
+
+# Command to run the application (will be overridden in docker-compose.yml)
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
